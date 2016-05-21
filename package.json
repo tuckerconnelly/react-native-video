@@ -2,7 +2,7 @@
   "name": "react-native-video",
   "version": "0.9.0",
   "description": "A <Video /> element for react-native",
-  "main": "Video.js",
+  "main": "lib/index.js",
   "license": "MIT",
   "author": "Brent Vatne <brentvatne@gmail.com> (https://github.com/brentvatne)",
   "contributors": [
@@ -32,6 +32,10 @@
     "keymirror": "0.1.1"
   },
   "scripts": {
+    "prebuild": "rm -rf lib",
+    "build": "babel -d lib src",
+    "build:watch": "babel -d lib src -w",
+    "prepublish": "npm run build",
     "test": "node_modules/.bin/eslint *.js"
   }
 }
