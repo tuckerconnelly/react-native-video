@@ -4,13 +4,13 @@ let Video
 
 switch (Platform.OS) {
   case 'ios':
-    Video = require('./index.ios.js')
+    Video = require('./Video.js')
     break
   case 'android':
-    Video = require('./index.android.js')
+    Video = require('./Video.js')
     break
   case 'web':
-    Video = require('./index.web.js')
+    Video = require('./VideoWeb.js')
     break
 }
 
