@@ -1,0 +1,112 @@
+const React = require('react')
+const omit = require('lodash/omit')
+
+const { PropTypes, Component, createElement } = React
+
+class RCTVideo extends Component {
+  constructor(...args) {
+    super(...args)
+
+    this.video = null
+  }
+
+  componentDidMount() {
+    // Render component twice so this.video is available
+    // in get aspectStyles
+
+    this.video.addEventListener('loadedmetadata', ({ target }) => {
+      const { onLoad } = this.props
+
+      onLoad && onLoad({
+        canPlayFastForward: true,
+        canPlayReverse: true,
+        canPlaySlowForward: true,
+        canPlaySlowReverse: true,
+        canStepBackward: true,
+        canStepForward: true,
+        currentTime: 0,
+        duration: target.duration,
+        naturalSize: {
+          height: target.height,
+          orientation: target.width >= target.height ? 'landscape' : 'portrait',
+          width: target.width,
+        },
+      })
+      this.forceUpdate()
+    })
+  }
+
+  get aspectStyles() {
+    if (!this.base) return {}
+
+    const { offsetWidth, offsetHeight } = this.base
+    const { videoWidth, videoHeight } = this.video
+
+    const containerAspectRatio = offsetWidth / offsetHeight
+    const videoAspectRatio = videoWidth / videoHeight
+
+    switch (this.props.resizeMode) {
+      case RCTVideo.Constants.ScaleAspectFit:
+        return videoAspectRatio >= containerAspectRatio ? { width: '100%' } : { height: '100%' }
+      case RCTVideo.Constants.ScaleAspectFill:
+        return videoAspectRatio >= containerAspectRatio ? { height: '100%' } : { width: '100%' }
+      case RCTVideo.Constants.ScaleToFill:
+        return { width: '100%', height: '100%' }
+    }
+    return {}
+  }
+
+  render() {
+    const { src, muted, repeat, style } = this.props
+    const other = omit(this.props, ['source', 'muted', 'repeat', 'style'])
+    return (
+      createElement('div', Object.assign({}, {
+        ref: c => this.base = c,
+        style: Object.assign({}, styles.base, style || {}),
+      }, other),
+        createElement('video', {
+          ref: 'video',
+          muted,
+          autoPlay: true,
+          loop: repeat,
+          style: Object.assign({}, styles.video, this.aspectStyles),
+        },
+          createElement('source', {
+            src: src.uri,
+            type: `video/${src.type}`,
+          })
+        )
+      )
+    )
+  }
+}
+
+RCTVideo.Constants = {
+  ScaleToFill: 'ScaleToFill',
+  ScaleAspectFit: 'ScaleAspectFit',
+  ScaleAspectFill: 'ScaleAspectFill',
+  ScaleNone: 'ScaleNone',
+}
+
+RCTVideo.propTypes = {
+  resizeMode: PropTypes.string,
+  muted: PropTypes.bool,
+  repeat: PropTypes.bool,
+  src: PropTypes.object.isRequired,
+  onLoad: PropTypes.func,
+
+  style: PropTypes.object,
+}
+
+RCTVideo.defaultProps = {
+  muted: false,
+  repeat: false,
+}
+
+module.exports = RCTVideo
+
+const styles = {
+  base: {
+    overflow: 'hidden',
+  },
+}
