@@ -1,7 +1,12 @@
 import React, {Component, PropTypes} from 'react';
-import {StyleSheet, requireNativeComponent, NativeModules, View} from 'react-native';
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import {StyleSheet, requireNativeComponent, NativeModules, View} from 'react-native-universal';
 import VideoResizeMode from './VideoResizeMode.js';
+
+let resolveAssetSource
+
+if (!global.__BUNDLE_START_TIME__) resolveAssetSource = require('react-native-web/dist/Libraries/Image/resolveAssetSource') // eslint-disable-line max-len
+else resolveAssetSource = require('react-native/Libraries/Image/resolveAssetSource')
+
 
 const styles = StyleSheet.create({
   base: {
