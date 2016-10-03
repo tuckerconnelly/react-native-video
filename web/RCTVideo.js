@@ -57,23 +57,24 @@ class RCTVideo extends Component {
   }
 
   render() {
-    const { src, muted, repeat, style } = this.props
-    const other = omit(this.props, ['source', 'muted', 'repeat', 'style'])
+    const { View } = require('react-native-web')
+    const { source, muted, repeat, style } = this.props
+    const other = omit(this.props, Object.keys(RCTVideo.propTypes))
+
     return (
-      createElement('div', Object.assign({}, {
+      createElement(View, Object.assign({}, {
         ref: c => this.base = c,
-        style: Object.assign({}, styles.base, style || {}),
+        style,
       }, other),
         createElement('video', {
-          ref: 'video',
+          ref: c => this.video = c,
           muted,
           autoPlay: true,
           loop: repeat,
-          style: Object.assign({}, styles.video, this.aspectStyles),
+          style: this.aspectStyles,
         },
           createElement('source', {
-            src: src.uri,
-            type: `video/${src.type}`,
+            src: source.uri,
           })
         )
       )
@@ -92,10 +93,10 @@ RCTVideo.propTypes = {
   resizeMode: PropTypes.string,
   muted: PropTypes.bool,
   repeat: PropTypes.bool,
-  src: PropTypes.object.isRequired,
+  source: PropTypes.object.isRequired,
   onLoad: PropTypes.func,
 
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 }
 
 RCTVideo.defaultProps = {
@@ -104,9 +105,3 @@ RCTVideo.defaultProps = {
 }
 
 module.exports = RCTVideo
-
-const styles = {
-  base: {
-    overflow: 'hidden',
-  },
-}
