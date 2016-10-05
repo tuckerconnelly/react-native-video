@@ -36,6 +36,10 @@ class RCTVideo extends Component {
     })
   }
 
+  setNativeProps(props) {
+    this.base.setNativeProps(props)
+  }
+
   get aspectStyles() {
     if (!this.base) return {}
 
