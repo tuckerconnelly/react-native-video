@@ -1,5 +1,5 @@
 const React = require('react')
-const omit = require('lodash/omit')
+const pick = require('lodash/pick')
 
 const { PropTypes, Component, createElement } = React
 
@@ -58,13 +58,12 @@ class RCTVideo extends Component {
 
   render() {
     const { View } = require('react-native-web')
-    const { source, muted, repeat, style } = this.props
-    const other = omit(this.props, Object.keys(RCTVideo.propTypes))
+    const { source, muted, repeat } = this.props
+    const other = pick(this.props, Object.keys(View.propTypes))
 
     return (
       createElement(View, Object.assign({}, {
         ref: c => this.base = c,
-        style,
       }, other),
         createElement('video', {
           ref: c => this.video = c,
