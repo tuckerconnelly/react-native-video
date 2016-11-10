@@ -19,6 +19,11 @@ export default class Video extends Component {
   setNativeProps(nativeProps) {
     this._root.setNativeProps(nativeProps);
   }
+  
+  viewConfig = {
+    validAttributes: {},
+    uiViewClassName: 'RCTVideo',
+  }
 
   seek = (time) => {
     this.setNativeProps({ seek: time });
